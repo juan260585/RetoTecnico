@@ -1,0 +1,166 @@
+﻿<!-- Button trigger modal -->
+<button type="button" id="btnmodel" style="display:none" class="btn btn-primary" data-toggle="modal" data-target="#usuarioModal">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="usuarioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nuevo Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Nombre</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="form-group">
+                            <input id="txtNombre" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Fecha de Creacion</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="form-group">
+                            @* <input id="txtFechaCreacion" class="form-control" /> *@
+                            <input type="date" id="txtFechaCreacion" class="form-control" min="2024-04-01" max="2030-12-31" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Usuario</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="form-group">
+                            <input id="txtUsuario" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Password</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="form-group">
+                            <input id="txtPassword" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Estatus</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="form-group">
+                            @* <input id="txtEstatus" class="form-control" /> *@
+                            <input type="checkbox" id="txtHabilitado" />
+                            <label for="txtHabilitado">Habilitado</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                <a href="#" onclick="SaveUser(); return false;" class="btn btn-primary">Save changes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<button type="button" id="btnmodeledit" style="display:none" class="btn btn-primary" data-toggle="modal" data-target="#edituserModal">
+    Launch demo modal
+</button>
+<div class="modal fade" id="edituserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Id Usuario</label>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="form-group">
+                            <input id="etxtIdUsuario" disabled="disabled" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Nombre</label>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="form-group">
+                            <input id="etxtNombre" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Fecha de Creacion</label>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="form-group">
+                            <input id="etxtFechaCreacion" disabled="disabled"  class="form-control" />
+                            @* <input type="date" id="etxtFechaCreacion" class="form-control" min="2024-04-01" max="2030-12-31" /> *@
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Usuario</label>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="form-group">
+                            <input id="etxtUsuario" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Password</label>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="form-group">
+                            <input id="etxtPassword" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Estatus</label>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="form-group">
+                            @* <input id="etxtEstatus" class="form-control" /> *@
+                            <input type="checkbox" id="etxtHabilitado" />
+                            <label for="etxtHabilitado">Habilitado</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                <a href="#" onclick="EditUser(); return false;" class="btn btn-primary">Save changes</a>
+            </div>
+        </div>
+    </div>
+

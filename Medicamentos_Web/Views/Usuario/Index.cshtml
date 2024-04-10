@@ -1,0 +1,443 @@
+﻿<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedheader/3.2.3/css/fixedHeader.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.all.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.min.css" rel="stylesheet">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+<style>
+    thead input {
+        width: 100%;
+    }
+     
+</style>
+
+@* @{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1> *@
+<div class="row">
+    <div class="col-lg-12">
+        <a href="#" onclick="NewUser(); return false;" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Agregar Usuario</a>
+        @Html.Partial("~/Views/Shared/Partial/_Usuario.cshtml")
+    </div>
+    <div class="col-lg-12">
+        <br />
+        <table id="tblUsuarios" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>IdUsuario</th>
+                    <th>Nombre</th>
+                    <th>FechaCreación</th>
+                    <th>Usuario</th>
+                    <th>Password</th>
+                    <th>Estatus</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script>
+<script type="text/javascript">
+    var js = jQuery.noConflict(true);
+    js(document).ready(function () {       
+        // Setup - add a text input to each footer cell
+        $('#tblUsuarios thead tr')
+            .clone(true)
+            .addClass('filters')
+            .appendTo('#tblUsuarios thead');
+
+        LoadUsers();
+
+        
+
+    });
+
+    
+
+    function FuntionEdit(element) {
+        var codigo = $(element).closest('tr').find('#hdncodigo').val();
+        //alert(codigo);
+        $('#etxtIdUsuario').val('');
+        $('#etxtNombre').val('');
+        $('#etxtFechaCreacion').val('');
+        $('#etxtUsuario').val('');
+        $('#etxtPassword').val('');
+        $('#etxtHabilitado').prop('checked', false);
+        //$('#etxtEstatus').val('');
+        $('#btnmodeledit').trigger('click');
+        $.ajax({
+            type: 'GET', 
+            url: 'https://localhost:7200/api/Usuarios/' + codigo,
+            contentType: "application/json; charset=utf-8",
+            data: { id: codigo },
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                //debugger;
+                //alert(new Date().toLocaleDateString(data.fechacreacion));
+                var fecha = new Date(data.fechacreacion);
+                var whatever = fecha.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                alert(whatever);
+                if (data != null) {
+                    $('#etxtIdUsuario').val(data.idusuario);
+                    $('#etxtNombre').val(data.nombre);
+                    $('#etxtFechaCreacion').val(data.fechacreacion);
+                    //$('#etxtFechaCreacion').val(new Date(data.fechacreacion).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }));
+                    $('#etxtUsuario').val(data.usuario1);
+                    $('#etxtPassword').val(data.password);
+                    //$('#etxtEstatus').val(data.estatus);
+                    if (data.estatus == 1) {
+                        $('#etxtHabilitado').prop('checked', true);
+                    }
+                }
+
+            },
+            error: function (e) {
+                Swal.fire({
+                    position: "top-center",
+                    icon: "error",
+                    title: "Se presentó un Error!!!",
+                    showConfirmButton: false,
+                    timer: 3500
+                });
+                console.log("ERROR: ", e);
+            }
+        });
+    }
+
+    function FuntionRemove(element) {
+        var idusuario = $(element).closest('tr').find('#hdncodigo').val();
+        //alert(idusuario);
+        $.ajax({
+            type: 'DELETE',
+            url: 'https://localhost:7200/api/Usuarios/' + idusuario,
+            contentType: "application/json; charset=utf-8",
+            data: { id: idusuario },
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                Swal.fire({
+                    position: "top-center",
+                    icon: "success",
+                    title: "El Usuario se Eliminó con Éxito!!!",
+                    showConfirmButton: false,
+                    timer: 3500
+                });
+                LoadUsers();
+            },
+            error: function (e) {
+                Swal.fire({
+                    position: "top-center",
+                    icon: "error",
+                    title: "Se presentó un Error!!!",
+                    showConfirmButton: false,
+                    timer: 3500
+                });
+                console.log("ERROR: ", e);
+            },
+            done: function (e) {
+            }
+        });
+    }
+
+    function LoadUsers() {
+        tabledata = [];        
+        $.ajax({
+            type: 'GET',
+            url: 'https://localhost:7200/api/Usuarios',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                $.each(data, function (key, value) {                   
+                    // var _edit =   "<a href='#' class='btn btn-primary' onclick='FuntionEdit(this)'>Edit</a>"
+                    // var _remove = "<a href='#' class='btn btn-danger' onclick='FuntionRemove(this)'>Remove</a>"
+                    var _edit = "<a href='#' class='btn btn-sm btn-primary' onclick='FuntionEdit(this)'><i class='fa-solid fa-pencil'></i></a>"
+                    var _remove = "<a href='#' class='btn btn-sm btn-danger' onclick='FuntionRemove(this)'><i class='fa-solid fa-trash-can'></i></a>"
+                    var _hidden = "<input type='hidden' id='hdncodigo' value='" + value.idusuario + "' />";
+                    var _action = _hidden + _edit + "  " + _remove;
+                    tabledata.push([value.idusuario, value.nombre, value.fechacreacion, value.usuario1, value.password, value.estatus, _action])
+                })
+            },
+            error: function (e) {
+                Swal.fire({
+                    position: "top-center",
+                    icon: "error",
+                    title: "Se presentó un Error!!!",
+                    showConfirmButton: false,
+                    timer: 3500
+                });
+                console.log("ERROR: ", e);
+            }
+        });
+
+        js('#tblUsuarios').DataTable({
+            destroy: true,
+            data: tabledata,
+            orderCellsTop: true,
+            fixedHeader: true,
+            initComplete: function () {
+                var api = this.api();
+
+                // For each column
+                api
+                    .columns()
+                    .eq(0)
+                    .each(function (colIdx) {
+                        // Set the header cell to contain the input element
+                        var cell = $('.filters th').eq(
+                            $(api.column(colIdx).header()).index()
+                        );
+                        var title = $(cell).text();
+                        //$(cell).html('<input type="text" placeholder="' + title + '" />');
+                        $(cell).html('<input type="text" placeholder="Buscar..." />');
+
+                        // On every keypress in this input
+                        $(
+                            'input',
+                            $('.filters th').eq($(api.column(colIdx).header()).index())
+                        )
+                            .off('keyup change')
+                            .on('change', function (e) {
+                                // Get the search value
+                                $(this).attr('title', $(this).val());
+                                var regexr = '({search})'; //$(this).parents('th').find('select').val();
+
+                                var cursorPosition = this.selectionStart;
+                                // Search the column for that value
+                                api
+                                    .column(colIdx)
+                                    .search(
+                                        this.value != ''
+                                            ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                            : '',
+                                        this.value != '',
+                                        this.value == ''
+                                    )
+                                    .draw();
+                            })
+                            .on('keyup', function (e) {
+                                e.stopPropagation();
+
+                                $(this).trigger('change');
+                                $(this)
+                                    .focus()[0]
+                                    .setSelectionRange(cursorPosition, cursorPosition);
+                            });
+                    });
+            },
+        });
+    }
+
+    function NewUser() {
+        Clear();
+        $('#btnmodel').trigger('click');
+    }
+    function Clear() {
+        $('#txtIdUsuario').val('');
+        $('#txtNombre').val('');
+        $('#txtFechaCreacion').val('');
+        $('#txtUsuario').val('');
+        $('#txtPassword').val('');
+        $('#txtEstatus').val('');                
+    }
+
+
+    function EditUser() {
+        var iscompleted = true;
+        var idUsuario = $('#etxtIdUsuario').val();
+        var nombre = $('#etxtNombre').val();
+        var fechaCreacion = $('#etxtFechaCreacion').val();
+        var usuario = $('#etxtUsuario').val();
+        var password = $('#etxtPassword').val();
+        //var estatus = $('#etxtEstatus').val();
+        if ($('#etxtHabilitado').prop('checked')) {
+            var estatus = 1;
+        } else {
+            var estatus = 0;
+        }
+        if (nombre == '') {
+            iscompleted = false;
+            $('#etxtNombre').css('border-color', 'red');
+        }
+        else {
+            $('#etxtNombre').css('border-color', '#ccc');
+        }
+        if (iscompleted) {
+            var tabledata = new Object();
+            tabledata.idusuario = idUsuario;
+            tabledata.nombre = nombre;
+            tabledata.fechacreacion = fechaCreacion;
+            tabledata.usuario1 = usuario;
+            tabledata.password = password;
+            tabledata.idPerfil = '1';
+            tabledata.estatus = estatus;
+            //alert(tabledata.pro_Descripcion);
+            //alert(tabledata.password);
+            $.ajax({
+                type: 'PUT',
+                url: 'https://localhost:7200/api/Usuarios/' + idUsuario,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                data: JSON.stringify(tabledata),
+                success: function (data) {
+                    Swal.fire({
+                        position: "top-center",
+                        icon: "success",
+                        title: "El Usuario se Actualizó con Éxito!!!",
+                        showConfirmButton: false,
+                        timer: 3500
+                    });
+                    // if (data == 'pass') {
+                    LoadUsers();
+                    $('.close').trigger('click');
+                    //alert('Usuario Actualizado con Éxito!!!');
+                    // }
+                    //else {
+                    //alert('Falló el intento de Crear Producto');
+                    // }
+                    //alert(response);
+                },
+                error: function (e) {
+                    Swal.fire({
+                        position: "top-center",
+                        icon: "error",
+                        title: "Se presentó un Error!!!",
+                        showConfirmButton: false,
+                        timer: 3500
+                    });
+                    console.log("ERROR: ", e);
+                },
+                done: function (e) {
+                }
+            });
+        }
+    }
+    function validapassword(password) {
+        
+       
+            return true;
+       
+    }
+    function SaveUser() {
+        //alert('valida valores');
+        
+        var iscompleted = true;
+        //var idusuario = $('#txtIdUsuario').val();
+        var nombre = $('#txtNombre').val();
+        var fechacreacion = $('#txtFechaCreacion').val();
+        var usuario = $('#txtUsuario').val();
+        var password = $('#txtPassword').val();
+        //var estatus = $('#txtEstatus').val();
+        //alert(precio);
+        if (validapassword(password)){
+            if (nombre == '') {
+                iscompleted = false;
+                $('#txtNombre').css('border-color', 'red');
+            }
+            else {
+                $('#txtNombre').css('border-color', '#ccc');
+            }
+            if (fechacreacion == '') {
+                iscompleted = false;
+                $('#txtFechaCreacion').css('border-color', 'red');
+            }
+            else {
+                $('#txtFechaCreacion').css('border-color', '#ccc');
+            }
+            if (usuario == '') {
+                iscompleted = false;
+                $('#txtUsuario').css('border-color', 'red');
+            }
+            else {
+                $('#txtUsuario').css('border-color', '#ccc');
+            }
+            if (password == '') {
+                iscompleted = false;
+                $('#txtPassword').css('border-color', 'red');
+            }
+            else {
+                $('#txtPassword').css('border-color', '#ccc');
+            }
+            // if (estatus == '') {
+            //     iscompleted = false;
+            //     $('#txtEstatus').css('border-color', 'red');
+            // }
+            // else {
+            //     $('#txtEstatus').css('border-color', '#ccc');
+            // }
+
+            if (iscompleted) {
+                var tabledata = new Object();
+                if ($('#txtHabilitado').prop('checked')) {
+                    tabledata.estatus = 1;
+                    //alert('true');
+                } else {
+                    tabledata.estatus = 0;
+                    // alert('false');
+                }
+                //tabledata.idUsuario = idusuario
+                tabledata.nombre = nombre;
+                tabledata.fechacreacion = fechacreacion;
+                tabledata.usuario1 = usuario;
+                tabledata.password = password;
+                tabledata.idPerfil = '1';
+                //tabledata.estatus = estatus;
+                //alert(tabledata.pro_Descripcion);
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'https://localhost:7200/api/Usuarios',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(tabledata),
+                    success: function (data) {
+                        Swal.fire({
+                            position: "top-center",
+                            icon: "success",
+                            title: "El Usuario se Insertó con Éxito!!!",
+                            showConfirmButton: false,
+                            timer: 3500
+                        });
+                        // if (data == 'pass') {
+                        LoadUsers();
+                        $('.close').trigger('click');
+                        //alert('Usuario Almacenado con Éxito!!!');
+                        // }
+                        //else {
+                        //alert('Falló el intento de Crear Producto');
+                        // }
+                        //alert(response);
+                    },
+                    error: function (e) {
+                        Swal.fire({
+                            position: "top-center",
+                            icon: "error",
+                            title: "Se presentó un Error!!!",
+                            showConfirmButton: false,
+                            timer: 3500
+                        });
+                        console.log("ERROR: ", e);
+                    },
+                    done: function (e) {
+                    }
+                });
+            }
+        } else { 
+        alert('pass no acpetado tiene que cambiarlo')
+        }
+    }
+</script>
