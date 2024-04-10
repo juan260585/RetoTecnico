@@ -88,7 +88,7 @@
                 //alert(new Date().toLocaleDateString(data.fechacreacion));
                 var fecha = new Date(data.fechacreacion);
                 var whatever = fecha.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                alert(whatever);
+                //alert(whatever);
                 if (data != null) {
                     $('#etxtIdUsuario').val(data.idusuario);
                     $('#etxtNombre').val(data.nombre);
