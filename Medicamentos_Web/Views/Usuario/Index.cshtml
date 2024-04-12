@@ -326,11 +326,33 @@
         }
     }
     function validapassword(password) {
-        
-       
-            return true;
-       
+        const lowerCaseLetter = /[a-z]/;
+        const upperCaseLetter = /[A-Z]/;
+        const digit = /\d/;
+        const sCharacter = /[!$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
+        if (password.length < 8) {            
+            return false;
+        }
+
+        if (!lowerCaseLetter.test(password)) {
+            return false;
+        }
+
+        if (!upperCaseLetter.test(password)) {
+            return false;
+        }
+
+        if (!digit.test(password)) {
+            return false;
+        }
+        if (!sCharacter.test(password)) {
+            return false;
+        }
+
+        return true;
     }
+    
     function SaveUser() {
         //alert('valida valores');
         
@@ -342,7 +364,7 @@
         var password = $('#txtPassword').val();
         //var estatus = $('#txtEstatus').val();
         //alert(precio);
-        if (validapassword(password)){
+        
             if (nombre == '') {
                 iscompleted = false;
                 $('#txtNombre').css('border-color', 'red');
@@ -380,6 +402,7 @@
             // }
 
             if (iscompleted) {
+            if (validapassword(password)) {
                 var tabledata = new Object();
                 if ($('#txtHabilitado').prop('checked')) {
                     tabledata.estatus = 1;
@@ -435,9 +458,16 @@
                     done: function (e) {
                     }
                 });
+            } else {
+                Swal.fire({
+                    position: "top-center",
+                    icon: "error",
+                    title: "La contraseña debe contener al menos un dígito,una letra, un simbolo o longitud mínima de 8 caracteres",
+                    showConfirmButton: false,
+                    timer: 4500
+                });
             }
-        } else { 
-        alert('pass no acpetado tiene que cambiarlo')
+        
         }
     }
 </script>
